@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ankitnayak09/PrimeAuth/issues"
   },
-  "homepage": "https://github.com/ankitnayak09/PrimeAuth#readme"
+  "homepage": "https://github.com/ankitnayak09/PrimeAuth#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
