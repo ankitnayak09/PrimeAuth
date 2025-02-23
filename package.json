@@ -5,8 +5,11 @@
   "description": "Implementation of Industry Standard Authentication System",
   "main": "server.js",
   "scripts": {
-    "dev":"nodemon src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prisma": {
+    "schema": "src/models/schema.prisma"
   },
   "repository": {
     "type": "git",
@@ -19,7 +22,9 @@
   },
   "homepage": "https://github.com/ankitnayak09/PrimeAuth#readme",
   "dependencies": {
-    "express": "^4.21.2"
+    "@prisma/client": "^6.4.1",
+    "express": "^4.21.2",
+    "prisma": "^6.4.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
