@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+
 const prisma = new PrismaClient();
 
 const generateAccessToken = (user) => {
@@ -18,10 +20,15 @@ const generateAccessToken = (user) => {
 	);
 };
 
-const generateRefreshToken = (user) => {
+const generateRefreshToken = async (user) => {
 	const { username } = user;
 	return jwt.sign({ username }, process.env.REFRESH_TOKEN_SECRET, {
 		expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
 	});
 };
-export { prisma, generateAccessToken, generateRefreshToken };
+
+const hashPassword = async (password) => {
+	const hashedPassword = await bcrypt.hash(password, 10);
+	return hashedPassword;
+};
+export { prisma, generateAccessToken, generateRefreshToken, hashPassword };
