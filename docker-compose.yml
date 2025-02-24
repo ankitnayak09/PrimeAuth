@@ -1,6 +1,5 @@
-version: '3.8'
 services:
-  postgres: 
+  postgres:
     image: postgres:latest
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
