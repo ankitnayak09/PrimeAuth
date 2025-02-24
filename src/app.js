@@ -17,7 +17,7 @@ app.use("/v1", userRouter)
 // Error Handler
 app.use((err, req, res, next) => {
   console.log(err);
-  res.status(500).send("Something went wrong");
+  return res.status(500).send("Something went wrong");
 })
 
 const PORT = process.env.PORT || 3000;
