@@ -20,7 +20,7 @@ const generateAccessToken = (user) => {
 	);
 };
 
-const generateRefreshToken = async (user) => {
+const generateRefreshToken = (user) => {
 	const { username } = user;
 	return jwt.sign({ username }, process.env.REFRESH_TOKEN_SECRET, {
 		expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
@@ -31,4 +31,14 @@ const hashPassword = async (password) => {
 	const hashedPassword = await bcrypt.hash(password, 10);
 	return hashedPassword;
 };
-export { prisma, generateAccessToken, generateRefreshToken, hashPassword };
+
+const isPasswordCorrect = async (inputPassword, userPassword) => {
+	return await bcrypt.compare(inputPassword, userPassword);
+};
+export {
+	prisma,
+	generateAccessToken,
+	generateRefreshToken,
+	hashPassword,
+	isPasswordCorrect,
+};
