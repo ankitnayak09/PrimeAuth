@@ -21,7 +21,6 @@ router.route("/change-password", () => {});
 // TODO: Forgot Password
 router.route("/forgot-password", () => {});
 
-// TODO: Logout
 router.route("/logout").post(verify, logout);
 
 export default router;
