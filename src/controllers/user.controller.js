@@ -103,35 +103,13 @@ const login = asyncHandler(async (req, res) => {
 		});
 });
 
-const verify = asyncHandler(async (req, res) => {
-	const token = req.cookies.accessToken;
-
-	if (!token) {
-		throw new ErrorHandler(401, "Access token is missing");
-	}
-
-	try {
-		const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-		const user = await prisma.user.findUnique({
-			where: { id: decoded.id },
-			select: {
-				id: true,
-				username: true,
-				email: true,
-				fullName: true,
-			},
-		});
-
-		if (!user) {
-			throw new ErrorHandler(404, "User not found");
-		}
-
-		return res.status(200).json({
-			success: true,
-			user,
-		});
-	} catch (error) {
-		throw new ErrorHandler(401, "Invalid access token");
-	}
+const verifyUser = asyncHandler((req, res) => {
+	return res.status(200).json({
+		success: true,
+		user: req.user,
+	});
 });
-export { signup, login, verify };
+
+const logout = asyncHandler(() => {});
+
+export { signup, login, logout, verifyUser };
