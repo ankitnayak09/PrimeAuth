@@ -9,7 +9,7 @@ import verify from "../middlewares/verify.js";
 import { Router } from "express";
 const router = Router();
 
-router.route("/verify").get(verify, verifyUser);
+router.route("/verify").post(verify, verifyUser);
 
 router.route("/signup").post(signup);
 
@@ -22,6 +22,6 @@ router.route("/change-password", () => {});
 router.route("/forgot-password", () => {});
 
 // TODO: Logout
-router.route("/logout").post(logout);
+router.route("/logout").post(verify, logout);
 
 export default router;

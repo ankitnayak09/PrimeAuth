@@ -110,6 +110,29 @@ const verifyUser = asyncHandler((req, res) => {
 	});
 });
 
-const logout = asyncHandler(() => {});
+const logout = asyncHandler(async (req, res) => {
+	// Remove refresh token from db
+	// return user null
+	await prisma.user.update({
+		where: {
+			id: req.user.id,
+		},
+		data: {
+			refreshToken: null,
+		},
+	});
+	const options = {
+		httpOnly: true,
+		secure: true,
+	};
+	return res
+		.status(200)
+		.clearCookie("accessToken", options)
+		.clearCookie("refreshToken", options)
+		.json({
+			success: true,
+			message: "Logged out successfully",
+		});
+});
 
 export { signup, login, logout, verifyUser };
