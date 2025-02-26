@@ -32,7 +32,7 @@ const hashPassword = async (password) => {
 	return hashedPassword;
 };
 
-const isPasswordCorrect = async (inputPassword, userPassword) => {
+const comparePassword = async (inputPassword, userPassword) => {
 	return await bcrypt.compare(inputPassword, userPassword);
 };
 export {
@@ -40,5 +40,5 @@ export {
 	generateAccessToken,
 	generateRefreshToken,
 	hashPassword,
-	isPasswordCorrect,
+	comparePassword,
 };
