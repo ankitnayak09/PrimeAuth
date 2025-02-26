@@ -16,7 +16,6 @@ router.route("/signup").post(signup);
 
 router.route("/login").post(login);
 
-// TODO: Change Password
 router.route("/change-password").post(verify, changePassword);
 
 router.route("/forgot-password").post(verify);
