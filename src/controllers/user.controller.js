@@ -140,7 +140,7 @@ const logout = asyncHandler(async (req, res) => {
 		});
 });
 
-const forgotPassword = asyncHandler(async (req, res) => {
+const changePassword = asyncHandler(async (req, res) => {
 	const { oldPassword, newPassword } = req.body;
 
 	if (!(oldPassword && newPassword)) {
@@ -177,4 +177,4 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	});
 });
 
-export { signup, login, logout, verifyUser, forgotPassword };
+export { signup, login, logout, verifyUser, changePassword };
