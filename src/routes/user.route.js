@@ -3,6 +3,7 @@ import {
 	signup,
 	logout,
 	verifyUser,
+	forgotPassword,
 } from "./../controllers/user.controller.js";
 import verify from "../middlewares/verify.js";
 
@@ -18,8 +19,7 @@ router.route("/login").post(login);
 // TODO: Change Password
 router.route("/change-password", () => {});
 
-// TODO: Forgot Password
-router.route("/forgot-password", () => {});
+router.route("/forgot-password").post(verify, forgotPassword);
 
 router.route("/logout").post(verify, logout);
 

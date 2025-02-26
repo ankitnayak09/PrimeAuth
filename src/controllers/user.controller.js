@@ -1,13 +1,13 @@
 import {
 	hashPassword,
 	prisma,
-	isPasswordCorrect,
+	comparePassword,
 	generateAccessToken,
 	generateRefreshToken,
 } from "./../database/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
-import jwt from "jsonwebtoken";
+import checkPasswordValidity from "../utils/checkPasswordValidity.js";
 
 const signup = asyncHandler(async (req, res) => {
 	const { email, fullName, username, password } = req.body;
@@ -31,6 +31,11 @@ const signup = asyncHandler(async (req, res) => {
 		},
 	});
 	if (usernameExist) throw new ErrorHandler(400, "Username Already Exists");
+
+	const isPasswordValid = checkPasswordValidity(password);
+	if (!isPasswordValid.isValid)
+		throw new ErrorHandler(400, isPasswordValid.error);
+
 	const hashedPassword = await hashPassword(password);
 
 	const newUser = await prisma.user.create({
@@ -66,9 +71,9 @@ const login = asyncHandler(async (req, res) => {
 
 	if (!user) throw new ErrorHandler(400, "User Doesn't exist");
 
-	const isPasswordValid = await isPasswordCorrect(password, user.password);
+	const isPasswordValid = await comparePassword(password, user.password);
 
-	if (!isPasswordValid) throw new ErrorHandler(401, "Invalid Credentials");
+	if (!isPasswordValid) throw new ErrorHandler(401, "Invalid Password");
 
 	const accessToken = generateAccessToken(user);
 	const refreshToken = generateRefreshToken(user);
@@ -135,4 +140,41 @@ const logout = asyncHandler(async (req, res) => {
 		});
 });
 
-export { signup, login, logout, verifyUser };
+const forgotPassword = asyncHandler(async (req, res) => {
+	const { oldPassword, newPassword } = req.body;
+
+	if (!(oldPassword && newPassword)) {
+		throw new ErrorHandler(
+			400,
+			"Old Password, and New Password are required."
+		);
+	}
+
+	const user = await prisma.user.findUnique({
+		where: { id: req.user.id },
+	});
+
+	if (!user) throw new ErrorHandler(400, "User doesn't exist.");
+	console.log(user.password);
+
+	const isPasswordCorrect = await comparePassword(oldPassword, user.password);
+	if (!isPasswordCorrect) throw new ErrorHandler(400, "Invalid Old Password");
+
+	const isPasswordValid = checkPasswordValidity(newPassword);
+	if (!isPasswordValid.isValid)
+		throw new ErrorHandler(400, isPasswordValid.error);
+
+	const hashedNewPassword = await hashPassword(newPassword);
+
+	await prisma.user.update({
+		where: { id: req.user.id },
+		data: { password: hashedNewPassword },
+	});
+
+	return res.status(200).json({
+		success: true,
+		message: "Password updated successfully.",
+	});
+});
+
+export { signup, login, logout, verifyUser, forgotPassword };
