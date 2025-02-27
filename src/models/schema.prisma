@@ -20,4 +20,6 @@ model User {
   fullName String @db.VarChar(255)
   username String @unique
   refreshToken String?
+  resetPasswordToken String?
+  resetPasswordExpires DateTime?
 }
