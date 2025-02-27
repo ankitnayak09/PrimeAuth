@@ -8,6 +8,8 @@ import {
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import checkPasswordValidity from "../utils/checkPasswordValidity.js";
+import { sendEmail } from "../utils/email.js";
+import crypto from "crypto";
 
 const signup = asyncHandler(async (req, res) => {
 	const { email, fullName, username, password } = req.body;
@@ -177,4 +179,80 @@ const changePassword = asyncHandler(async (req, res) => {
 	});
 });
 
-export { signup, login, logout, verifyUser, changePassword };
+const forgotPassword = asyncHandler(async (req, res) => {
+	const { email } = req.body;
+
+	// Generate a reset token
+	const resetToken = crypto.randomBytes(20).toString("hex");
+
+	// Set token and expiration on user
+	const resetPasswordExpires = new Date(Date.now() + 900000); // 15 minutes from now
+	await prisma.user.update({
+		where: { email },
+		data: {
+			resetPasswordToken: resetToken,
+			resetPasswordExpires,
+		},
+	});
+
+	// Send email
+	const text = `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+    	Please click on the following link, or paste this into your browser to complete the process:\n\n
+   		http://${req.headers.host}/reset-password/${resetToken}\n\n
+    	If you did not request this, please ignore this email and your password will remain unchanged.\n`;
+
+	await sendEmail(email, "Password Reset", text);
+
+	res.status(200).json({
+		success: true,
+		message: "Password reset token sent to email",
+	});
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+	const { token } = req.params;
+	const { newPassword } = req.body;
+
+	if (!newPassword) throw new ErrorHandler(400, "New Password is required");
+
+	const user = await prisma.user.findFirst({
+		where: {
+			resetPasswordToken: token,
+			resetPasswordExpires: {
+				gt: new Date(), // Check for token expiry
+			},
+		},
+	});
+
+	if (!user)
+		throw new ErrorHandler(
+			400,
+			"Password reset token is invalid or has expired."
+		);
+
+	const hashedPassword = await hashPassword(newPassword);
+
+	await prisma.user.update({
+		where: { id: user.id },
+		data: {
+			password: hashedPassword,
+			resetPasswordToken: null,
+			resetPasswordExpires: null,
+		},
+	});
+
+	res.status(200).json({
+		success: true,
+		message: "Password has been reset successfully",
+	});
+});
+
+export {
+	signup,
+	login,
+	logout,
+	verifyUser,
+	changePassword,
+	forgotPassword,
+	resetPassword,
+};
