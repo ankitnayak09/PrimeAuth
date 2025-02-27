@@ -1,7 +1,7 @@
 import transporter from "../config/nodemailer.js";
 import asyncHandler from "./asyncHandler.js";
 
-const sendEmail = asyncHandler(async (to, subject, text) => {
+const sendEmail = async (to, subject, text) => {
 	const mailOptions = {
 		from: process.env.EMAIL_USER,
 		to,
@@ -10,7 +10,7 @@ const sendEmail = asyncHandler(async (to, subject, text) => {
 	};
 
 	await transporter.sendMail(mailOptions);
-});
+};
 
 const sendOTP = asyncHandler(async (to, otp) => {
 	const subject = "Your OTP Code";
