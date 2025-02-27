@@ -13,8 +13,8 @@ import healthRouter from "./routes/health.route.js";
 import userRouter from "./routes/user.route.js";
 
 // Routes Declaration
-app.use("/v1/health", healthRouter);
-app.use("/v1", userRouter);
+app.use("/api/v1/health", healthRouter);
+app.use("/api/v1", userRouter);
 
 // Error Handler
 app.use((err, req, res, next) => {
