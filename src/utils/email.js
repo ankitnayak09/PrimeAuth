@@ -1,5 +1,5 @@
-import transporter from "../config/nodemailer";
-import asyncHandler from "./asyncHandler";
+import transporter from "../config/nodemailer.js";
+import asyncHandler from "./asyncHandler.js";
 
 const sendEmail = asyncHandler(async (to, subject, text) => {
 	const mailOptions = {
@@ -24,4 +24,4 @@ const sendVerificationToken = asyncHandler(async (to, token) => {
 	await sendEmail(to, subject, text);
 });
 
-export { sendOTP, sendVerificationToken };
+export { sendOTP, sendVerificationToken, sendEmail };
