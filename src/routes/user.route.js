@@ -1,21 +1,29 @@
-import {signup} from "./../controllers/user.controller.js"
+import {
+	login,
+	signup,
+	logout,
+	verifyUser,
+	changePassword,
+	forgotPassword,
+	resetPassword,
+} from "./../controllers/user.controller.js";
+import verify from "../middlewares/verify.js";
 
 import { Router } from "express";
 const router = Router();
 
-// TODO: Get User Details
-router.route("/user").get(() => {})
+router.route("/verify").post(verify, verifyUser);
 
-// TODO: Register User
-router.route("/signup").post(signup)
+router.route("/signup").post(signup);
 
-// TODO: Login User
-router.route("/login", () => {})
+router.route("/login").post(login);
 
-// TODO: Change Password
-router.route("/change-password", () => {})
+router.route("/change-password").post(verify, changePassword);
 
-// TODO: Forgot Password
-router.route("/forgot-password", () => {})
+router.route("/forgot-password").post(forgotPassword);
+
+router.route("/reset-password/:token").post(resetPassword);
+
+router.route("/logout").post(verify, logout);
 
 export default router;
